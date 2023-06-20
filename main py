@@ -1,0 +1,80 @@
+import discord
+from discord.ext import commands
+
+intents = discord.Intents.default()
+intents.message_content = True  # Enable privileged message content intent
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user.name} ({bot.user.id})')
+
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    await bot.process_commands(message)
+
+
+@bot.command()
+async def ban(ctx, member: discord.Member):
+    # Ban logic goes here
+    await ctx.send(f'{member.mention} has been banned.')
+
+
+@bot.command()
+async def mute(ctx, member: discord.Member):
+    # Mute logic goes here
+    await ctx.send(f'{member.mention} has been muted.')
+
+
+@bot.command()
+async def timeout(ctx, member: discord.Member, duration):
+    # Timeout logic goes here
+    await ctx.send(f'{member.mention} has been timed out for {duration}.')
+
+
+# Other command implementations go here
+
+
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(title='Help Menu', description='List of available commands:', color=discord.Color.blue())
+
+    for command in bot.commands:
+        embed.add_field(name=command.name, value=command.help, inline=False)
+
+    await ctx.send(embed=embed)
+
+
+# Load events from the events folder
+bot.load_extension('events.on_ready')
+bot.load_extension('events.on_message')
+
+# Load command handlers from the handlers folder
+bot.load_extension('handlers.command_handler')
+bot.load_extension('handlers.event_handler')
+
+# Load modules from the modules folder
+bot.load_extension('modules.mod')
+bot.load_extension('modules.utility')
+
+# Load commands from the commands folder
+bot.load_extension('commands.ban')
+bot.load_extension('commands.mute')
+bot.load_extension('commands.timeout')
+bot.load_extension('commands.afk')
+bot.load_extension('commands.avatar')
+bot.load_extension('commands.lockdown')
+bot.load_extension('commands.snipe')
+bot.load_extension('commands.unban')
+bot.load_extension('commands.unmute')
+bot.load_extension('commands.untimeout')
+bot.load_extension('commands.help')
+
+# Run the bot
+bot.run('ur token')
